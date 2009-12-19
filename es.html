@@ -1,0 +1,515 @@
+<!--
+
+Spanish verb trainer by Thomas Raes (thomas.raes@pandora.be)
+Released under the GPL v2 license.
+
+v1.0	28/11/2009	first public release (announced on http://cvc.cervantes.es/foros, Foro didáctico, message 146159)
+v1.1	02/12/2009	fixed bug that asked for 1st person imperative (which doesn't exist)
+v1.2	03/12/2009	changed colors of preterito and preterito perfecto
+v1.3	06/12/2009	added negative imperative and extra verbs
+v1.4	08/12/2009	changed correction tables to include the imperativo negativo	
+v1.5	19/12/2009	added language class
+
+-->
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/> 
+<html>
+<head>
+
+<title>Polyglot</title>
+
+<link rel=stylesheet href="es.css" content="text/css">
+
+<noscript>
+<h1>Error: no Javascript </h1>
+</noscript>
+
+<script language="JavaScript" src="language.js"></script>
+
+<script language="javascript">
+
+//////////////////////////
+//	State		//
+//////////////////////////
+
+var total = 0;
+var correct = 0;
+var firstAttempt = true;
+var question = 0;
+
+
+//////////////////////////
+//	Spanish		//
+//////////////////////////
+
+var spanish = language();
+
+// --- persons --- //
+
+var persons = new Array();
+
+persons.push(['yo']);
+persons.push(['tú']);
+persons.push(['ello','ella','usted']);
+persons.push(['nosotros','nosotras']);
+persons.push(['vosotros','vosotras']);
+persons.push(['ellos','ellas','ustedes']);
+
+spanish.setPersons(persons);
+
+// --- times --- //
+
+var ind_pres 		= "Presente (de indicativo)";
+var ind_imp		= "Imperfecto (de indicativo)";
+var ind_pret		= "Pretérito/Indefinido";
+var ind_fut		= "Futuro (I)";
+var ind_cond 		= "Condicional (I)";
+var sub_pres 		= "Presente de subjuntivo";
+var sub_imp		= "Imperfecto de subjuntivo";
+var perf_ind		= "Perfecto (de indicativo)";
+var plusc_ind		= "Pluscuamperfecto (de indicativo)";
+var pret_perf		= "Pretérito perfecto";
+var fut_dos		= "Futuro II/Perfecto";
+var cond_dos		= "Condicional II/Perfecto";
+var perf_subj		= "Presente perfecto de subjuntivo";
+var plusc_subj		= "Pluscuamperfecto de subjuntivo";
+var imperativo_afi 	= "Imperativo Afirmativo";
+var imperativo_neg 	= "Imperativo Negativo";
+
+function regularPerfecto(inf,p)
+{
+	// indicativo
+	spanish.verbs[inf][perf_subj] 	= ['he ' + p,'has ' + p,'ha ' + p,'hemos ' + p,'habéis ' + p,'han ' + p];
+	spanish.verbs[inf][plusc_subj] 	= ['había ' + p,'habías ' + p,'había ' + p,'habíamos ' + p,'habíais ' + p,'habían ' + p];
+	spanish.verbs[inf][pret_perf] 	= ['hube ' + p,'hubiste ' + p,'hubo ' + p,'hubimos ' + p,'hubisteis ' + p,'hubieron ' + p];
+	spanish.verbs[inf][fut_dos] 	= ['habré ' + p,'habrás ' + p,'habrá ' + p,'habremos ' + p,'habréis ' + p,'habran ' + p];
+	spanish.verbs[inf][cond_dos] 	= ['habría ' + p,'habrías ' + p,'habría ' + p,'habríamos ' + p,'habríais ' + p,'habrían ' + p];
+
+	// subjunctivo
+	spanish.verbs[inf][perf_subj] 	= ['haya ' + p,'hayas ' + p,'haya ' + p,'hayamos ' + p,'hayáis ' + p,'hayan ' + p];
+	spanish.verbs[inf][plusc_subj] 	= ['hubiera ' + p,'hubieras ' + p,'hubiera ' + p,'hubiéramos ' + p,'hubierais ' + p,'hubieran ' + p];
+}
+
+function regularAR(r)
+{
+	var inf = r + 'ar';
+	var participio = r + 'ado';
+
+	spanish.addVerb(inf);
+
+	// indicativo
+	spanish.verbs[inf][ind_pres]	= [r + 'o',r + 'as',r + 'a',r + 'amos',r + 'áis',r + 'an'];
+	spanish.verbs[inf][ind_imp]	= [r + 'aba',r + 'abas',r + 'aba',r + 'ábamos',r + 'abais',r + 'aban'];
+	spanish.verbs[inf][ind_pret]	= [r + 'é',r + 'aste',r + 'ó',r + 'amos',r + 'asteis',r + 'aron'];
+	spanish.verbs[inf][ind_fut]	= [r + 'aré',r + 'arás',r + 'ará',r + 'aremos',r + 'aréis',r + 'arán'];
+	spanish.verbs[inf][ind_cond] 	= [r + 'aría',r + 'arías',r + 'aría',r + 'aríamos',r + 'aríais',r + 'arían'];
+
+	// subjunctivo
+	spanish.verbs[inf][sub_pres]	= [r + 'e',r + 'es',r + 'e',r + 'emos',r + 'éis',r + 'en'];
+	spanish.verbs[inf][sub_imp]	= [r + 'ara',r + 'aras',r + 'ara',r + 'áramos',r + 'arais',r + 'aran'];
+	spanish.verbs[inf][imperativo_afi]	= [' ',r + 'a',r + 'e',r + 'emos',r + 'ad',r + 'en'];
+
+	regularPerfecto(inf,participio);
+}
+
+function regularER(r)
+{
+	var inf = r + 'er';
+	var participio = r + 'ido';
+
+	spanish.addVerb(inf);
+
+	// indicativo
+	spanish.verbs[inf][ind_pres]	= [r + 'o',r + 'es',r + 'e',r + 'emos',r + 'éis',r + 'en'];
+	spanish.verbs[inf][ind_imp]	= [r + 'ía',r + 'ías',r + 'ía',r + 'íamos',r + 'íais',r + 'ían'];
+	spanish.verbs[inf][ind_pret]	= [r + 'í',r + 'iste',r + 'ió',r + 'imos',r + 'isteis',r + 'ieron'];
+	spanish.verbs[inf][ind_fut]	= [r + 'eré',r + 'erás',r + 'erá',r + 'eremos',r + 'eréis',r + 'erán'];
+	spanish.verbs[inf][ind_cond] 	= [r + 'ería',r + 'erías',r + 'ería',r + 'eríamos',r + 'eríais',r + 'erían'];
+
+	// subjunctivo
+	spanish.verbs[inf][sub_pres]	= [r + 'a',r + 'as',r + 'a',r + 'amos',r + 'áis',r + 'an'];
+	spanish.verbs[inf][sub_imp]	= [r + 'iera',r + 'ieras',r + 'iera',r + 'iéramos',r + 'ierais',r + 'ieran'];
+	spanish.verbs[inf][imperativo_afi]	= [' ',r + 'e',r + 'a',r + 'amos',r + 'ed',r + 'an'];
+
+	regularPerfecto(inf,participio);
+}
+
+function regularIR(r)
+{
+	var inf = r + 'ir';
+	var participio = r + 'ido';
+	
+	spanish.addVerb(inf);
+
+	// indicativo
+	spanish.verbs[inf][ind_pres]	= [r + 'o',r + 'es',r + 'e',r + 'imos',r + 'ís',r + 'en'];
+	spanish.verbs[inf][ind_imp]	= [r + 'ía',r + 'ías',r + 'ía',r + 'íamos',r + 'íais',r + 'ían'];
+	spanish.verbs[inf][ind_pret]	= [r + 'í',r + 'iste',r + 'ió',r + 'imos',r + 'isteis',r + 'ieron'];
+	spanish.verbs[inf][ind_fut]	= [r + 'iré',r + 'irás',r + 'irá',r + 'iremos',r + 'iréis',r + 'irán'];
+	spanish.verbs[inf][ind_cond] = [r + 'iría',r + 'irías',r + 'iría',r + 'iríamos',r + 'iríais',r + 'irían'];
+
+	// subjunctivo
+	spanish.verbs[inf][sub_pres]	= [r + 'a',r + 'as',r + 'a',r + 'amos',r + 'áis',r + 'an'];
+	spanish.verbs[inf][sub_imp]	= [r + 'iera',r + 'ieras',r + 'iera',r + 'iéramos',r + 'ierais',r + 'ieran'];
+	spanish.verbs[inf][imperativo_afi]	= [' ',r + 'e',r + 'a',r + 'amos',r + 'id',r + 'an'];
+
+	regularPerfecto(inf,participio);
+}
+
+regularAR('habl'); // hablar
+regularER('com'); // comer
+regularIR('viv'); // vivir
+
+// --- irregulares --- //
+
+spanish.addVerb('haber');
+spanish.verbs['haber'][ind_pres] 	= ['he','has','ha','hemos','habéis','han'];
+spanish.verbs['haber'][ind_imp] 	= ['había','habías','había','habíamos','habíais','habían'];
+spanish.verbs['haber'][ind_pret] 	= ['hube','hubiste','hubo','hubimos','hubisteis','hubieron'];
+spanish.verbs['haber'][ind_fut] 	= ['habré','habrás','habrá','habremos','habréis','habrán'];
+spanish.verbs['haber'][ind_cond] 	= ['habría','habrías','habría','habríamos','habríais','habrían'];
+spanish.verbs['haber'][sub_pres] 	= ['haya','hayas','haya','hayamos','hayáis','hayan'];
+spanish.verbs['haber'][sub_imp] 	= ['hubiera','hubieras','hubiera','hubiéramos','hubierais','hubieran'];
+spanish.verbs['haber'][imperativo_afi] 	= [' ','he','haya','hayamos','habed','hayan'];
+spanish.verbs['haber'][imperativo_neg]	= ['','no hayas','no haya','no hayamos','no hayáis','no hayan'];
+regularPerfecto('haber','habido');
+
+
+spanish.addVerb('estar');
+spanish.verbs['estar'][ind_pres]	= ['estoy','estás','está','estamos','estáis','están'];
+spanish.verbs['estar'][ind_imp]		= ['estaba','estabas','estaba','estábamos','estabais','estaban'];
+spanish.verbs['estar'][ind_pret]	= ['estuve','estuviste','estuvo','estuvimos','estuvisteis','estuvieron'];
+spanish.verbs['estar'][ind_fut]		= ['estaré','estarás','estará','estaremos','estaréis','estarán'];
+spanish.verbs['estar'][ind_cond]	= ['estaría','estarías','estaría','estaríamos','estaríais','estarían'];
+spanish.verbs['estar'][sub_pres]	= ['esté','estés','esté','estemos','estéis','estén'];
+spanish.verbs['estar'][sub_imp]		= ['estuviera','estuvieras','estuviera','estuviéramos','estuvierais','estuvieran'];
+spanish.verbs['estar'][imperativo_afi]	= [' ','está','esté','estemos','estad','estén'];
+spanish.verbs['estar'][imperativo_neg]	= [' ','no estés','no esté','no estemos','no estéis','no estén'];
+regularPerfecto('estar','estado');
+
+spanish.addVerb('ser');
+spanish.verbs['ser'][ind_pres]		= ['soy','eres','es','somos','sois','son'];
+spanish.verbs['ser'][ind_imp]		= ['era','eras','era','éramos','erais','eran'];
+spanish.verbs['ser'][ind_pret]		= ['fui','fuiste','fue','fuimos','fuisteis','fueron'];
+spanish.verbs['ser'][ind_fut]		= ['seré','serás','será','seremos','seréis','serán'];
+spanish.verbs['ser'][ind_cond]		= ['sería','serías','sería','seríamos','seríais','serían'];
+spanish.verbs['ser'][sub_pres]		= ['sea','seas','sea','seamos','seáis','sean'];
+spanish.verbs['ser'][sub_imp]		= ['fuera','fueras','fuera','fuéramos','fuerais','fueran'];
+spanish.verbs['ser'][imperativo_afi]	= [' ','sé','sea','seamos','sed','sean'];
+spanish.verbs['ser'][imperativo_neg]	= [' ','no seas','no sea','no seamos','no seáis','no sean'];
+regularPerfecto('ser','sido');
+
+spanish.addVerb('decir');
+spanish.verbs['decir'][ind_pres] 	= ['digo','dices','dice','decimos','decís','dicen'];
+spanish.verbs['decir'][ind_imp] 	= ['decía','decías','decía','decíamos','decíais','decían'];
+spanish.verbs['decir'][ind_pret] 	= ['dije','dijiste','dijo','dijimos','dijisteis','dijeron'];
+spanish.verbs['decir'][ind_fut] 	= ['diré','dirás','dirá','diremos','diréis','dirán'];
+spanish.verbs['decir'][ind_cond] 	= ['diría','dirías','diría','diríamos','diríais','dirían'];
+spanish.verbs['decir'][sub_pres] 	= ['diga','digas','diga','digamos','digáis','digan'];
+spanish.verbs['decir'][sub_imp] 	= ['dijera','dijeras','dijera','dijéramos','dijerais','dijeran'];
+spanish.verbs['decir'][imperativo_afi] 	= ['','di','diga','digamos','decid','digan'];
+spanish.verbs['decir'][imperativo_neg] 	= ['','no digas','no diga','no digamos','no digáis','no digan'];
+regularPerfecto('decir','dicho');
+
+spanish.addVerb('hacer');
+spanish.verbs['hacer'][ind_pres]	= ['hago','haces','hace','hacemos','hacéis','hacen'];
+spanish.verbs['hacer'][ind_imp]		= ['hacía','hacías','hacía','hacíamos','hacíais','hacían'];
+spanish.verbs['hacer'][ind_pret]	= ['hice','hiciste','hizo','hicimos','hicisteis','hicieron'];
+spanish.verbs['hacer'][ind_fut]		= ['haré','harás','hará','haremos','haréis','harán'];
+spanish.verbs['hacer'][ind_cond]	= ['haría','harías','haría','haríamos','haríais','harían'];
+spanish.verbs['hacer'][sub_pres]	= ['haga','hagas','haga','hagamos','hagáis','hagan'];
+spanish.verbs['hacer'][sub_imp]		= ['hiciera','hicieras','hiciera','hiciéramos','hicierais','hicieran'];
+spanish.verbs['hacer'][imperativo_afi]	= ['','haz','haga','hagamos','haced','hagan'];
+spanish.verbs['hacer'][imperativo_neg]	= ['','no hagas','no haga','no hagamos','no hagáis','no hagan'];
+regularPerfecto('hacer','hecho');
+
+spanish.addVerb('ir');
+spanish.verbs['ir'][ind_pres]		= ['voy','vas','va','vamos','vais','van'];
+spanish.verbs['ir'][ind_imp]		= ['iba','ibas','iba','íbamos','ibais','iban'];
+spanish.verbs['ir'][ind_pret]		= ['fui','fuiste','fue','fuimos','fuisteis','fueron'];
+spanish.verbs['ir'][ind_fut]		= ['iré','irás','irá','iremos','iréis','irán'];
+spanish.verbs['ir'][ind_cond]		= ['iría','irías','iría','iríamos','iríais','irían'];
+spanish.verbs['ir'][sub_pres]		= ['vaya','vayas','vaya','vayamos','vayáis','vayan'];
+spanish.verbs['ir'][sub_imp]		= ['fuera','fueras','fuera','fuéramos','fuerais','fueran'];
+spanish.verbs['ir'][imperativo_afi]	= ['','ve','vaya','vamos','id','vayan'];
+spanish.verbs['ir'][imperativo_neg]	= ['','no vayas','no vaya','no vayamos','no vayáis','no vayan'];
+regularPerfecto('ir','ido');
+
+spanish.addVerb('tener');
+spanish.verbs['tener'][ind_pres]	= ['tengo','tienes','tiene','tenemos','tenéis','tienen'];
+spanish.verbs['tener'][ind_imp]		= ['tenía','tenías','tenía','teníamos','teníais','tenían'];
+spanish.verbs['tener'][ind_pret]	= ['tuve','tuviste','tuvo','tuvimos','tuvisteis','tuvieron'];
+spanish.verbs['tener'][ind_fut]		= ['tendré','tendrás','tendrá','tendremos','tendréis','tendrán'];
+spanish.verbs['tener'][ind_cond]	= ['tendría','tendrías','tendría','tendríamos','tendríais','tendrían'];
+spanish.verbs['tener'][sub_pres]	= ['tenga','tengas','tenga','tengamos','tengáis','tengan'];
+spanish.verbs['tener'][sub_imp]		= ['tuviera','tuvieras','tuviera','tuviéramos','tuvierais','tuvieran'];
+spanish.verbs['tener'][imperativo_afi]	= ['','ten','tenga','tengamos','tened','tengan'];
+spanish.verbs['tener'][imperativo_neg]	= ['','no tengas','no tenga','no tengamos','no tengáis','no tengan'];
+regularPerfecto('tener','tenido');
+
+spanish.addVerb('ver');
+spanish.verbs['ver'][ind_pres]		= ['veo','ves','ve','vemos','veis','ven'];
+spanish.verbs['ver'][ind_imp]		= ['veía','veías','veía','veíamos','veíais','veían'];
+spanish.verbs['ver'][ind_pret]		= ['vi','viste','vio','vimos','visteis','vieron'];
+spanish.verbs['ver'][ind_fut]		= ['veré','verás','verá','veremos','veréis','verán'];
+spanish.verbs['ver'][ind_cond]		= ['vería','verías','vería','veríamos','veríais','verían'];
+spanish.verbs['ver'][sub_pres]		= ['vea','veas','vea','veamos','veáis','vean'];
+spanish.verbs['ver'][sub_imp]		= ['viera','vieras','viera','viéramos','vierais','vieran'];
+spanish.verbs['ver'][imperativo_afi]	= ['','ve','vea','veamos','ved','vean'];
+spanish.verbs['ver'][imperativo_neg]	= ['','no veas','no vea','no veamos','no veáis','no vean'];
+regularPerfecto('ver','visto');
+
+spanish.addVerb('poder');
+spanish.verbs['poder'][ind_pres]	= ['puedo','puedes','puede','podemos','podéis','pueden'];
+spanish.verbs['poder'][ind_imp]		= ['podía','podías','podía','podíamos','podíais','podían'];
+spanish.verbs['poder'][ind_pret]	= ['pude','pudiste','pudo','pudimos','pudisteis','pudieron'];
+spanish.verbs['poder'][ind_fut]		= ['podré','podrás','podrá','podremos','podréis','podrán'];
+spanish.verbs['poder'][ind_cond]	= ['podría','podrías','podría','podríamos','podríais','podrían'];
+spanish.verbs['poder'][sub_pres]	= ['pueda','puedas','pueda','podamos','podáis','puedan'];
+spanish.verbs['poder'][sub_imp]		= ['pudiera','pudieras','pudiera','pudiéramos','pudierais','pudieran'];
+spanish.verbs['poder'][imperativo_afi]	= ['','puede','pueda','podamos','poded','puedan'];
+spanish.verbs['poder'][imperativo_neg]	= ['','no puedas','no pueda','no podamos','no podáis','no puedan'];
+regularPerfecto('poder','podido');
+
+spanish.addVerb('dar');
+spanish.verbs['dar'][ind_pres]		= ['doy','das','da','damos','dais','dan'];
+spanish.verbs['dar'][ind_imp]		= ['daba','dabas','daba','dábamos','dabais','daban'];
+spanish.verbs['dar'][ind_pret]		= ['di','diste','dio','dimos','disteis','dieron'];
+spanish.verbs['dar'][ind_fut]		= ['daré','darás','dará','daremos','daréis','darán'];
+spanish.verbs['dar'][ind_cond]		= ['daría','darías','daría','daríamos','daríais','darían'];
+spanish.verbs['dar'][sub_pres]		= ['dé','des','dé','demos','deis','den'];
+spanish.verbs['dar'][sub_imp]		= ['diera','dieras','diera','diéramos','dierais','dieran'];
+spanish.verbs['dar'][imperativo_afi]	= ['','da','dé','demos','dad','den'];
+spanish.verbs['dar'][imperativo_neg]	= ['','no des','no dé','no demos','no deis','no den'];
+regularPerfecto('dar','dado');
+
+//////////////////////////////////
+//	Correction Display	//
+//////////////////////////////////
+
+function showTime(time,question)
+{
+	var html = "";
+
+	html += "<table>"
+
+	html += "<tr><td  class=\"tiempo-titulo\">";
+	html += time;
+	html += "</td></tr>";
+
+	html += "<tr>";
+	html += "<td>";
+	html += "<table>";
+
+	for(var i = 0; i < 3; i++)
+	{
+		if(time == question.timeName)
+		{
+			html += "<tr><td>";
+			html += spanish.verbs[question.verbName][question.timeName][i];
+			html += "</td><td>";
+			html += spanish.verbs[question.verbName][question.timeName][3 + i];
+			html += "</tr>";
+		}
+		else
+		{
+			html += "<tr><td></td><td></td></tr>";
+		}
+	}
+	
+	html += "</table>";
+	html += "</td>";
+	html += "</tr>";
+	
+	html += "</table>"
+	
+	return html;
+}
+
+function showSpanishCorrection(question)
+{
+	var timePairs = [];
+	timePairs.push([ind_pres,perf_ind]);
+	timePairs.push([ind_imp,plusc_ind]);
+	timePairs.push([ind_pret,pret_perf]);
+	timePairs.push([ind_fut,fut_dos]);
+	timePairs.push([ind_cond,cond_dos]);
+	timePairs.push([sub_pres,perf_subj]);
+	timePairs.push([sub_imp,plusc_subj]);
+	timePairs.push([imperativo_afi,imperativo_neg]);
+
+	var styles = {};
+	styles[ind_pres] 	= "ind-pres";
+	styles[perf_ind] 	= "perf-ind";
+	styles[ind_imp] 	= "ind-imp";
+	styles[plusc_ind] 	= "plusc-ind";
+	styles[ind_pret] 	= "ind-pret";
+	styles[pret_perf] 	= "pret-perf";
+	styles[ind_fut] 	= "ind-fut";
+	styles[fut_dos] 	= "fut-dos";
+	styles[ind_cond] 	= "ind-cond";
+	styles[cond_dos] 	= "cond-dos";
+	styles[sub_pres] 	= "sub-pres";
+	styles[perf_subj] 	= "perf-subj";
+	styles[sub_imp] 	= "sub-imp";
+	styles[plusc_subj] 	= "plusc-subj";
+	styles[imperativo_afi] 	= "imperativo-afi";
+	styles[imperativo_neg] 	= "imperativo-neg";
+
+	var html = "";
+
+	html += "<table class=\"correction\">";
+
+	for(var i = 0; i < timePairs.length; i++)
+	{
+		var left	= timePairs[i][0];
+		var right	= timePairs[i][1];
+
+		html += "<tr>";
+		html += "<td id=\"";
+		html += styles[left];
+		html += "\">";
+		html += showTime(left,question);
+		html += "</td>";
+		html += "<td id=\"";
+		html += styles[right];
+		html += "\">";
+		html += showTime(right,question);
+		html += "</td>";
+		html += "</tr>";
+	}
+
+	html += "</table>";
+	
+	div_correction.innerHTML = html;
+}
+
+//////////////////////////
+//	Control		//
+//////////////////////////
+
+function check()
+{
+	if(firstAttempt)
+	{
+		total += 1;
+	}
+	var answer = document.verbs.conjugada.value;
+	if(spanish.checkAnswer(question,answer))
+	{
+		if(firstAttempt)
+		{
+			correct += 1;
+		}
+		firstAttempt = true;
+		fill();
+	}
+	else
+	{
+		firstAttempt = false;
+		document.verbs.conjugada.value = "";	
+		document.verbs.conjugada.focus();
+		showSpanishCorrection(question);
+	}
+}
+
+function fill()
+{
+	question = spanish.generateQuestion();
+
+	div_tiempo.innerHTML 	= question.timeName; 
+	div_persona.innerHTML 	= question.personName;
+	div_infinitivo.innerHTML = question.verbName;
+	div_correction.innerHTML = "";
+
+	document.verbs.conjugada.value = "";
+	document.verbs.conjugada.focus();
+	
+	if(total > 0)
+	{
+		var htmlScore = "Score: ";
+		htmlScore += Math.round(((correct / total) * 100) * 100) / 100;
+		htmlScore += "%";
+		htmlScore += " (";
+		htmlScore += correct;
+		htmlScore += " de ";
+		htmlScore += total;
+		htmlScore += ")";
+		div_counter.innerHTML = htmlScore;
+	}
+
+	
+}
+
+function processKey(e)
+{
+     var enterKey = 13;
+     var key;     
+     if(window.event)
+     {
+          key = window.event.keyCode; //IE
+     }
+     else
+     {
+          key = e.which; //firefox     
+     }
+
+     if(key == enterKey)
+     {
+	check();
+     }
+
+     document.verbs.conjugada.focus();
+     return (key != enterKey);
+} 
+
+function addCharacter(character)
+{
+	document.verbs.conjugada.value += character;
+	document.verbs.conjugada.focus();
+}
+</script>
+</head>
+
+<!--
+
+//////////////////////////
+//	Page		//
+//////////////////////////
+
+-->
+
+<body>
+	<div id="div_version">v1.5</div>
+	<div id="div_counter"></div>
+
+	
+	<table class="problema">
+		<tr><td><div id="div_tiempo"></div></td></tr>
+		<tr><td><div id="div_infinitivo"></div></td></tr>
+	</table>
+
+	<table class="respuesta">
+	<tr>
+		<form name="verbs">
+		<td><div id="div_persona"></div></td>
+		<td><input type="text" name="conjugada" onKeyPress="return processKey(event)"/></td>
+		<td><input type="button" value="á" onclick="addCharacter('á')"/></td>
+		<td><input type="button" value="é" onclick="addCharacter('é')"/></td>
+		<td><input type="button" value="í" onclick="addCharacter('í')"/></td>
+		<td><input type="button" value="ó" onclick="addCharacter('ó')"/></td>
+		<td><input type="button" value="ú" onclick="addCharacter('ú')"/></td>
+		</form>
+	</tr>
+	<tr>
+		<td colspan=8><input type="button" value="ok" onclick="check()"/></td>
+	</tr>
+	</table>
+
+	<div id="div_correction"></div>
+
+
+<script language="javascript"> fill() </script>
+</body>
+</html>
+

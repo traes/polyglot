@@ -1,0 +1,144 @@
+body
+{
+	text-align: center;
+}
+
+
+#div_infinitivo
+{
+	font-weight:bold;
+	font-size:2em;
+}
+
+#div_tiempo
+{
+	font-weight:italic;
+	font-size:2em;
+}
+
+.tiempo-titulo
+{
+	font-weight:bold;
+}
+
+#div_counter
+{
+	text-align:right;
+}
+
+#div_version
+{
+	text-align:left;
+	font-weight:italic;
+}
+
+
+.problema
+{
+	text-align:center;
+	margin-left:auto; 
+	margin-right:auto;
+	padding:25px;
+	border:25px;
+}
+
+.correction
+{
+	text-align:left;
+	margin-left:auto; 
+	margin-right:auto;
+	border:25px;
+	padding:25px;
+}
+
+
+.respuesta
+{
+	margin-left:auto; 
+	margin-right:auto;
+	text-align:center;
+}
+
+
+#ind-pres
+{
+	background-color:#66CCCC;
+}
+
+#perf-ind
+{
+	background-color:#3399CC;
+}
+
+#ind-imp
+{
+	background-color:#F0E68C;
+}
+
+#plusc-ind
+{
+	background-color:#FFD700;
+}
+
+#ind-pret
+{
+	background-color:#FF6EB4;
+}
+
+#pret-perf
+{
+	background-color:#D02090;
+}
+
+#ind-fut
+{
+	background-color:#9ACD32;
+}
+
+#fut-dos
+{
+	background-color:#228022;
+}
+
+#ind-cond
+{
+	background-color:#CCC;
+}
+
+#cond-dos
+{
+	background-color:#999;
+}
+
+#sub-pres
+{
+	background-color:#99CCFF;
+}
+
+#perf-subj
+{
+	background-color:#669999;
+}
+
+#sub-imp
+{
+	background-color:#FF9933;
+}
+
+#plusc-subj
+{
+	background-color:#CC6600;
+}
+
+
+#imperativo-afi
+{
+	background-color:#B22222;
+}
+
+#imperativo-neg
+{
+	background-color:#B22222;
+}
+
+

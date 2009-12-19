@@ -1,0 +1,368 @@
+<!--
+
+Portuguese verb trainer by Thomas Raes (thomas.raes@pandora.be)
+Released under the GPL v2 license.
+
+-->
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/> 
+<html>
+<head>
+<title>Polyglot</title>
+
+<style portuguese="css">
+
+
+body
+{
+	text-align: center;
+}
+
+
+#div_infinito
+{
+	font-weight:bold;
+	font-size:2em;
+}
+
+#div_tempo
+{
+	font-weight:italic;
+	font-size:2em;
+}
+
+.tempo-titulo
+{
+	font-weight:bold;
+}
+
+#div_counter
+{
+	text-align:right;
+}
+
+#div_version
+{
+	text-align:left;
+	font-weight:italic;
+}
+
+.problem
+{
+	text-align:center;
+	margin-left:auto; 
+	margin-right:auto;
+	padding:25px;
+	border:25px;
+}
+
+.correction
+{
+	text-align:left;
+	margin-left:auto; 
+	margin-right:auto;
+	border:25px;
+	padding:25px;
+}
+
+
+.answer
+{
+	margin-left:auto; 
+	margin-right:auto;
+	text-align:center;
+}
+
+
+
+</style>
+ 
+<noscript>
+<h1>Error: no Javascript </h1>
+</noscript>
+
+<script language="JavaScript" src="language.js"></script>
+
+<script language="javascript">
+
+//////////////////////////
+//	State		//
+//////////////////////////
+
+var total = 0;
+var correct = 0;
+var firstAttempt = true;
+var question = 0;
+
+//////////////////////////
+//	Portuguese	//
+//////////////////////////
+
+var portuguese = language();
+
+// --- persons --- //
+
+var persons = new Array();
+
+persons.push(['eu']);
+persons.push(['tu']);
+persons.push(['o senhor','a senhora','ele','ela']);
+persons.push(['nós']);
+persons.push(['vocês']);
+persons.push(['os senhores','as senhoras','eles','elas']);
+
+portuguese.setPersons(persons);
+
+// --- times --- //
+
+var ind_pres 		= "Indicativo Presente";
+var ind_perf 		= "Indicativo Perfeito";
+var ind_imp 		= "Indicativo Imperfeito";
+var sub_pres 		= "Subjuntivo Presente";
+var sub_imp 		= "Subjuntivo Imperfeito";
+var sub_fut 		= "Subjuntivo Futuro";
+var imp			= "Imperativo";
+
+// --- irregular verbs --- //
+
+portuguese.addVerb('ser');
+portuguese.verbs['ser'][ind_pres] 	= ['sou','és','é','somos','','são'];
+portuguese.verbs['ser'][ind_perf] 	= ['fui','foste','foi','fomos','','foram'];
+portuguese.verbs['ser'][ind_imp] 	= ['era','eras','era','éramos','','eram'];
+portuguese.verbs['ser'][sub_pres] 	= ['seja','sejas','seja','sejamos','','sejam'];
+portuguese.verbs['ser'][sub_imp] 	= ['fosse','fosses','fosse','fôssemos','','fossem'];
+portuguese.verbs['ser'][sub_fut] 	= ['for','fores','for','formos','','forem'];
+
+portuguese.addVerb('ter');
+portuguese.verbs['ter'][ind_pres] 	= ['tenho','tens','tem','temos','','têm'];
+portuguese.verbs['ter'][ind_perf] 	= ['tive','tiveste','teve','tivemos','','tiveram'];
+portuguese.verbs['ter'][ind_imp] 	= ['tinha','tinhas','tinha','tinhamos','','tinham'];
+portuguese.verbs['ter'][sub_pres] 	= ['tenha','tenhas','tenha','tenhamos','','tenham'];
+portuguese.verbs['ter'][sub_imp] 	= ['tivesse','tivesses','tivesse','tivéssemos','','tivessem'];
+portuguese.verbs['ter'][sub_fut] 	= ['tiver','tiveres','tiver','tivermos','','tiverem'];
+
+portuguese.addVerb('estar');
+portuguese.verbs['estar'][ind_pres] 	= ['estou','estás','está','estamos','','estão'];
+portuguese.verbs['estar'][ind_perf] 	= ['estive','estiveste','esteve','estivemos','','estiveram'];
+portuguese.verbs['estar'][ind_imp] 	= ['estava','estavas','estava','estávamos','','estavam'];
+portuguese.verbs['estar'][sub_pres] 	= ['esteja','estejas','esteja','estejamos','','estejam'];
+portuguese.verbs['estar'][sub_imp] 	= ['estivesse','estivesses','estivesse','estivéssemos','','estivessem'];
+portuguese.verbs['estar'][sub_fut] 	= ['estiver','estiveres','estiver','estivermos','','estiverem'];
+
+//////////////////////////////////
+//	Correction Display	//
+//////////////////////////////////
+
+function showTime(time,question)
+{
+	var html = "";
+
+	html += "<table>"
+
+	html += "<tr><td  class=\"tempo-titulo\">";
+	html += time;
+	html += "</td></tr>";
+
+	html += "<tr>";
+	html += "<td>";
+	html += "<table>";
+
+	for(var i = 0; i < 3; i++)
+	{
+		if(time == question.timeName)
+		{
+			html += "<tr><td>";
+			html += portuguese.verbs[question.verbName][question.timeName][i];
+			html += "</td><td>";
+			html += portuguese.verbs[question.verbName][question.timeName][3 + i];
+			html += "</tr>";
+		}
+		else
+		{
+			html += "<tr><td></td><td></td></tr>";
+		}
+	}
+	
+	html += "</table>";
+	html += "</td>";
+	html += "</tr>";
+	
+	html += "</table>"
+	
+	return html;
+}
+
+function showPortugueseCorrection(question)
+{
+	
+	var timePairs = [];
+	timePairs.push([ind_pres,ind_perf,ind_imp]);
+	timePairs.push([sub_pres,sub_imp,sub_fut]);
+
+	var html = "";
+
+	html += "<table class=\"correction\">";
+
+	for(var i = 0; i < timePairs.length; i++)
+	{
+		var time0	= timePairs[i][0];
+		var time1	= timePairs[i][1];
+		var time2	= timePairs[i][2];
+
+		html += "<tr>";
+
+		html += "<td>";
+		html += showTime(time0,question);
+		html += "</td>";
+
+		html += "<td>";
+		html += showTime(time1,question);
+		html += "</td>";
+
+		html += "<td>";
+		html += showTime(time2,question);
+		html += "</td>";
+
+		html += "</tr>";
+	}
+
+	html += "</table>";
+	
+	div_correction.innerHTML = html;
+}
+
+//////////////////////////
+//	Control		//
+//////////////////////////
+
+function check()
+{
+	if(firstAttempt)
+	{
+		total += 1;
+	}
+	var answer = document.verbs.conjugada.value;
+	if(portuguese.checkAnswer(question,answer))
+	{
+		if(firstAttempt)
+		{
+			correct += 1;
+		}
+		firstAttempt = true;
+		fill();
+	}
+	else
+	{
+		firstAttempt = false;
+		document.verbs.conjugada.value = "";	
+		document.verbs.conjugada.focus();
+		showPortugueseCorrection(question);
+	}
+}
+
+function fill()
+{
+	question = portuguese.generateQuestion();
+
+	div_tempo.innerHTML 	= question.timeName; 
+	div_persona.innerHTML 	= question.personName;
+	div_infinito.innerHTML = question.verbName;
+	div_correction.innerHTML = "";
+
+	document.verbs.conjugada.value = "";
+	document.verbs.conjugada.focus();
+	
+	if(total > 0)
+	{
+		var htmlScore = "Score: ";
+		htmlScore += Math.round(((correct / total) * 100) * 100) / 100;
+		htmlScore += "%";
+		htmlScore += " (";
+		htmlScore += correct;
+		htmlScore += " de ";
+		htmlScore += total;
+		htmlScore += ")";
+		div_counter.innerHTML = htmlScore;
+	}
+
+	
+}
+
+function processKey(e)
+{
+     var enterKey = 13;
+     var key;     
+     if(window.event)
+     {
+          key = window.event.keyCode; //IE
+     }
+     else
+     {
+          key = e.which; //firefox     
+     }
+
+     if(key == enterKey)
+     {
+	check();
+     }
+
+     document.verbs.conjugada.focus();
+     return (key != enterKey);
+} 
+
+function addCharacter(character)
+{
+	document.verbs.conjugada.value += character;
+	document.verbs.conjugada.focus();
+}
+</script>
+</head>
+
+<!--
+
+//////////////////////////
+//	Page		//
+//////////////////////////
+
+-->
+
+<body>
+	<div id="div_version">v0.1</div>
+	<div id="div_counter"></div>
+
+	
+	<table class="problem">
+		<tr><td><div id="div_tempo"></div></td></tr>
+		<tr><td><div id="div_infinito"></div></td></tr>
+	</table>
+
+	<table class="answer">
+	<tr>
+		<form name="verbs">
+		<td><div id="div_persona"></div></td>
+		<td><input type="text" name="conjugada" onKeyPress="return processKey(event)"/></td>
+		<td><input type="button" value="á" onclick="addCharacter('á')"/></td>
+		<td><input type="button" value="â" onclick="addCharacter('â')"/></td>
+		<td><input type="button" value="ã" onclick="addCharacter('ã')"/></td>
+		<td><input type="button" value="à" onclick="addCharacter('à')"/></td>
+		<td><input type="button" value="ç" onclick="addCharacter('ç')"/></td>
+		<td><input type="button" value="é" onclick="addCharacter('é')"/></td>
+		<td><input type="button" value="ê" onclick="addCharacter('ê')"/></td>
+		<td><input type="button" value="ó" onclick="addCharacter('ó')"/></td>
+		<td><input type="button" value="ô" onclick="addCharacter('ô')"/></td>
+		<td><input type="button" value="õ" onclick="addCharacter('õ')"/></td>
+		<td><input type="button" value="ú" onclick="addCharacter('ú')"/></td>
+		</form>
+	</tr>
+	<tr>
+		<td colspan=12><input type="button" value="ok" onclick="check()"/></td>
+	</tr>
+	</table>
+
+	<div id="div_correction"></div>
+
+
+<script language="javascript"> fill() </script>
+</body>
+</html>
+
