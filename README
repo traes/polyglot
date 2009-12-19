@@ -1,2 +1,24 @@
 
-This is a simple javascript for practicing verbs online.
+Purpose
+-------
+
+These are simple webpages for practicing Spanish and Portuguese verbs.
+
+No external servers or databases are required, so you can also practice offline if you download the files to your harddisk.
+
+Usage
+-----
+
+When opening the page for a language in a browser (e.g es.html for spanish), it gives you a verb, time and person.
+
+If you fill in the correct conjugation, you get a point.
+You can see your current score a the top right of the page.
+
+In case you give a wrong answer, the page will display the table of conjugations.
+You can then enter a correction, but you will not receive any points.
+
+License
+-------
+
+GPL 2
+
